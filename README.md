@@ -1,7 +1,8 @@
-# Enterprise Windows Server & Microsoft 365 Administration Project
+# Active Directory Foundation - Enterprise Windows Server Lab
 
 ## Project Overview
-This repository documents my implementation of an enterprise-grade Windows Server 2022 infrastructure with Microsoft 365 integration. The project demonstrates advanced system administration skills and best practices for a professional corporate environment.
+This repository documents my implementation of an enterprise-grade Windows Server 2022 infrastructure with Microsoft 365 integration. The project demonstrates how I would setup a small or mid-sized business to manages user identities permissions and security policies across every machine on their network. 
+
 
 ## Environment Architecture
 - **DC01**: Primary Domain Controller (Windows Server 2022 with Desktop Experience)
@@ -9,7 +10,8 @@ This repository documents my implementation of an enterprise-grade Windows Serve
 - **SRV01**: Application/File Server (Windows Server 2022 with Desktop Experience) 
 - **CLIENT01**: Windows 10/11 client machine
 
-![Network Diagram](./documentation/images/network-diagram.png)
+![Enterprise OU Structure](./screenshots/OU%20structure/001-Enterpirse-Structure.png)
+
 
 ## Implementation Phases
 
