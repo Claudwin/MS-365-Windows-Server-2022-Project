@@ -12,6 +12,7 @@ This repository documents my implementation of an enterprise-grade Windows Serve
 
 ![Enterprise OU Structure](Infrastructure/Active-Directory/screenshots/OU structure/001-Enterpirse-Structure.png)
 
+<img src="Infrastructure/Active-Directory/screenshots/OU structure/001-Enterpirse-Structure.png" alt="Project Logo" width="400">
 
 ## Implementation Phases
 
