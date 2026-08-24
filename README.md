@@ -20,7 +20,12 @@ Enterprise OU Structure:  <br/>
 <img src="Infrastructure/Active-Directory/screenshots/OU structure/001-Enterpirse-Structure.png" height="80%" width="80%" alt="Enterprise OU Structure"/>
 <br />
 <br />
-
+<img src="Infrastructure/Active-Directory/screenshots/OU structure/003-Department-Nested-OU.png" height="80%" width="80%" alt="Department Structure"/>
+<br />
+<br />
+<img src="Infrastructure/Active-Directory/screenshots/OU structure/004-Servers-Nested-OU.png" height="80%" width="80%" alt="Servers OU Structure"/>
+<br />
+<br />
 ## Implementation Phases
 
 ### Phase 1: Active Directory Foundation
