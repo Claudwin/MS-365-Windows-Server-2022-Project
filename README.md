@@ -13,9 +13,9 @@ This repository documents my implementation of an enterprise-grade Windows Serve
   
 
 <p align="center">
-Enterprise OU Structure: 
-- Department-based OUs so Group Policy can later be targeted per department without restructuring
-- Nested Server OUs kept separate from user OUs for cleaner permission and policy targeting
+Enterprise OU Structure:  <br/>
+- Department-based OUs so Group Policy can later be targeted per department without restructuring <br/>
+- Nested Server OUs kept separate from user OUs for cleaner permission and policy targeting <br/>
 - Group-based access control used for file share permissions rather than assigning permissions to individual users  <br/>
 <img src="Infrastructure/Active-Directory/screenshots/OU structure/001-Enterpirse-Structure.png" height="80%" width="80%" alt="Enterprise OU Structure"/>
 <br />
