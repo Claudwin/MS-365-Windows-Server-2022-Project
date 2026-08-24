@@ -10,7 +10,7 @@ This repository documents my implementation of an enterprise-grade Windows Serve
 - **SRV01**: Application/File Server (Windows Server 2022 with Desktop Experience) 
 - **CLIENT01**: Windows 10/11 client machine
 
-![Enterprise OU Structure](./screenshots/OU%20structure/001-Enterpirse-Structure.png)
+![Enterprise OU Structure](Infrastructure/Active-Directory/screenshots/OU structure/001-Enterpirse-Structure.png)
 
 
 ## Implementation Phases
