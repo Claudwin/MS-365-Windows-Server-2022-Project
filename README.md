@@ -10,8 +10,13 @@ This repository documents my implementation of an enterprise-grade Windows Serve
 - **SRV01**: Application/File Server (Windows Server 2022 with Desktop Experience) 
 - **CLIENT01**: Windows 10/11 client machine
 
+  
+
 <p align="center">
-## Enterprise OU Structure:  <br/>
+Enterprise OU Structure: 
+- Department-based OUs so Group Policy can later be targeted per department without restructuring
+- Nested Server OUs kept separate from user OUs for cleaner permission and policy targeting
+- Group-based access control used for file share permissions rather than assigning permissions to individual users  <br/>
 <img src="Infrastructure/Active-Directory/screenshots/OU structure/001-Enterpirse-Structure.png" height="80%" width="80%" alt="Enterprise OU Structure"/>
 <br />
 <br />
