@@ -93,7 +93,7 @@ Configured a domain-wide password and audit policy through the Default Domain Po
 
 ## Solution
 
-The result is a working Active Directory domain (`enterprise.lab`) with a department-based OU structure, provisioned user accounts across three departments, 5 isolated service accounts, group-based file share access control, and a domain-wide security baseline enforcing password complexity, minimum length, and logon auditing — providing both the identity foundation and the security posture that later phases of this project build on.
+The result is a working Active Directory domain (`enterprise.lab`) with a department-based OU structure, provisioned user accounts across three departments, 5 isolated service accounts, group-based file share access control, and a domain-wide security baseline enforcing password complexity, minimum length, and logon auditing providing both the identity foundation and the security posture that later phases of this project build on.
 
 ## Skills Demonstrated
 
