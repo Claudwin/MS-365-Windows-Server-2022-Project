@@ -3,85 +3,112 @@
 ## Project Overview
 This repository documents my implementation of an enterprise-grade Windows Server 2022 infrastructure with Microsoft 365 integration. The project demonstrates how I would setup a small or mid-sized business to manages user identities permissions and security policies across every machine on their network. 
 
+## Architecture
 
-## Environment Architecture
-- **DC01**: Primary Domain Controller (Windows Server 2022 with Desktop Experience)
-- **DC02**: Secondary Domain Controller (Windows Server 2022 Core)
-- **SRV01**: Application/File Server (Windows Server 2022 with Desktop Experience) 
-- **CLIENT01**: Windows 10/11 client machine
+![Enterprise OU Structure](./Infrastructure/Active-Directory/screenshots/OU%20structure/001-Enterpirse-Structure.png)
 
-  
+The environment is built around a single Domain Controller (DC01, Windows Server 2022) hosting the `enterprise.lab` domain, with a department-based Organizational Unit structure — separate OUs for IT, Sales, and Finance, plus a dedicated Servers OU and a Service Accounts OU kept isolated from human user accounts.
 
-<p align="center">
-Enterprise OU Structure:  <br/>
-- Department-based OUs so Group Policy can later be targeted per department without restructuring <br/>
-- Nested Server OUs kept separate from user OUs for cleaner permission and policy targeting <br/>
-- Group-based access control used for file share permissions rather than assigning permissions to individual users  <br/>
-<img src="Infrastructure/Active-Directory/screenshots/OU structure/001-Enterpirse-Structure.png" height="80%" width="80%" alt="Enterprise OU Structure"/>
-<br />
-<br />
-<img src="Infrastructure/Active-Directory/screenshots/OU structure/003-Department-Nested-OU.png" height="80%" width="80%" alt="Department Structure"/>
-<br />
-<br />
-<img src="Infrastructure/Active-Directory/screenshots/OU structure/004-Servers-Nested-OU.png" height="80%" width="80%" alt="Servers OU Structure"/>
-<br />
-<br />
-## Implementation Phases
+**Design decisions:**
+- **Department-based OUs** so Group Policy can be targeted per department later without restructuring the directory
+- **Isolated Service Accounts OU** — automated processes (backup, SQL, web app, file sync, monitoring) run under dedicated service accounts rather than personal or shared admin credentials, reducing blast radius if any one credential is compromised
+- **Group-based access control** for file share permissions instead of assigning permissions to individual users — this makes access audits and offboarding dramatically simpler at scale
+- **Domain-wide password and audit policy** enforced through Group Policy rather than local, per-machine configuration, so every domain-joined machine inherits the same security baseline automatically
 
-### Phase 1: Active Directory Foundation
-- Installation and configuration of Active Directory Domain Services
-- Enterprise OU structure creation
-- User, group, and service account management
-- PowerShell automation scripts for administrative tasks
+## Implementation
 
-### Phase 2: Multi-Server Environment
-- Secondary domain controller deployment using Server Core
-- DNS configuration and redundancy
-- Active Directory replication and FSMO roles
-- Server hardening and security baseline
+### Domain Controller Promotion
+Installed the AD DS role and promoted the server to a Domain Controller, creating a new forest for `enterprise.lab` at the Windows Server 2016 functional level, with DNS installed alongside AD DS.
 
-### Phase 3: File Server & Group Policy
-- File server deployment and configuration
-- NTFS permissions and share setup
-- Group Policy implementation for security and management
-- Folder redirection and drive mapping
+```powershell
+Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
 
-### Phase 4: Client Integration
-- Windows client deployment and domain joining
-- Group Policy application and testing
-- User environment configuration
-- Performance optimization
+Install-ADDSForest `
+  -DomainName "enterprise.lab" `
+  -DomainNetbiosName "ENTERPRISE" `
+  -ForestMode "WinThreshold" `
+  -DomainMode "WinThreshold" `
+  -InstallDns:$true
+```
 
-### Phase 5: Microsoft 365 Integration
-- Microsoft 365 tenant configuration
-- Azure AD Connect implementation
-- Hybrid identity management
-- Exchange Online and SharePoint integration
+**Verification:**
+```powershell
+Get-ADForest
+Get-ADDomain
+Get-ADDomainController -Filter *
+```
 
-## Technical Skills Demonstrated
-- Active Directory design and implementation
-- Windows Server 2022 administration (GUI and PowerShell)
-- Group Policy management and troubleshooting
-- Security best practices and hardening
-- PowerShell scripting and automation
-- Microsoft 365 administration and integration
-- Documentation and process standardization
+### Organizational Units, Users & Groups
+Built a department-based OU structure (IT, Sales, Finance, plus a dedicated Servers OU), provisioned department users and 5 service accounts through Active Directory Users and Computers, and configured group-based access control for file share permissions.
 
-## Documentation Structure
-- `/documentation` - Detailed technical documentation
-- `/scripts` - PowerShell scripts used in the project
-- `/screenshots` - Visual documentation of the implementation
-- `/templates` - Configuration templates and standards
+```powershell
+New-ADUser -Name "Admin User" -SamAccountName "adminuser" `
+  -UserPrincipalName "adminuser@enterprise.lab" -Enabled $true `
+  -PasswordNeverExpires $true
+
+Add-ADGroupMember -Identity "Domain Admins" -Members "adminuser"
+```
+
+### Domain Security Baseline (Group Policy)
+Configured a domain-wide password and audit policy through the Default Domain Policy in Group Policy Management Editor:
+- **Minimum password length:** 12 characters
+- **Password complexity requirements:** Enabled
+- **Audit Logon events:** Success and Failure — so both successful and failed sign-in attempts are logged domain-wide, giving visibility into potential brute-force or unauthorized access attempts
+
+## Screenshots
+
+![Domain Controller promotion options](./Infrastructure/Active-Directory/screenshots/008-Domain-Controller-Options.png)
+*Forest and domain functional level configuration during DC promotion*
+
+![Service accounts](./Infrastructure/Active-Directory/screenshots/OU%20structure/010-Service-Accounts.png)
+*Dedicated service accounts, isolated from human user accounts*
+
+![Group-based file share access](./Infrastructure/Active-Directory/screenshots/Groups%20Access%20Control/002-Group-FileShare.png)
+*File share permissions assigned to a security group rather than individual users*
+
+![Minimum password length policy](./Security/001-Password-Policy.png)
+*Domain-wide minimum password length set to 12 characters via Group Policy*
+
+![Audit Logon policy](./Security/003-Audit-Logins.png)
+*Success and Failure logon auditing enabled domain-wide*
+
+## Problems Encountered
+
+**Problem:** During the initial AD DS promotion, the prerequisites check failed.
+**Solution:** [Fill in once you recall — likely a conflicting Certificate Services installation, based on the follow-up screenshot showing Certificate Services being removed. If that's right: "An existing Certificate Services installation conflicted with the Domain Controller promotion prerequisites. Removed/reconfigured Certificate Services and re-ran the promotion successfully."]
+**What I learned:** Domain Controller promotion has strict prerequisite checks that don't always surface obvious error messages — this taught me to read Windows Server error output carefully and verify what roles/services are already present on a server before assuming a clean install.
+
+*(Take 5 minutes to look at `013-Prerequisites-Failed.png` and `014-Remove-Cert-Services.png` one more time and fill in the bracketed part above with what actually happened — even a rough memory is enough.)*
+
+## Solution
+
+The result is a working Active Directory domain (`enterprise.lab`) with a department-based OU structure, provisioned user accounts across three departments, 5 isolated service accounts, group-based file share access control, and a domain-wide security baseline enforcing password complexity, minimum length, and logon auditing — providing both the identity foundation and the security posture that later phases of this project build on.
+
+## Skills Demonstrated
+
+- Active Directory Domain Services installation and Domain Controller promotion
+- Organizational Unit design for enterprise directory structures
+- User and service account provisioning and lifecycle management
+- Group-based (role-based) access control for file share permissions
+- Group Policy configuration for domain-wide password policy and security auditing
+- Troubleshooting AD DS installation prerequisites
+
+## What's Next
+
+- PowerShell automation for bulk user/account provisioning
+- File Services: NTFS permissions and share setup (scaffolded, not yet built)
+- Microsoft 365 / Hybrid Identity integration (scaffolded, not yet built)
+- Secondary Domain Controller, DNS redundancy, FSMO roles
+- Client machine domain integration and Group Policy testing
 
 ## Progress Tracking
+
 - [x] Project planning and environment design
-- [ ] Phase 1: Active Directory Foundation
-- [ ] Phase 2: Multi-Server Environment
-- [ ] Phase 3: File Server & Group Policy
-- [ ] Phase 4: Client Integration
-- [ ] Phase 5: Microsoft 365 Integration
-
-## About
-This project was created to demonstrate enterprise-level Windows Server and Microsoft 365 administration skills for potential employers. All configurations follow industry best practices and Microsoft recommendations.
-
-Created by: Claudwin Fortune
+- [x] Active Directory Domain Services & Domain Controller promotion
+- [x] Organizational Unit structure & user/service account provisioning
+- [x] Group-based file share access control
+- [x] Domain security baseline (password policy & audit logging)
+- [ ] File Server & NTFS permissions
+- [ ] Secondary Domain Controller / DNS redundancy
+- [ ] Client machine integration
+- [ ] Microsoft 365 / Hybrid Identity integration
