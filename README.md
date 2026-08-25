@@ -7,12 +7,12 @@ This repository documents my implementation of an enterprise-grade Windows Serve
 
 ![Enterprise OU Structure](./Infrastructure/Active-Directory/screenshots/OU%20structure/001-Enterpirse-Structure.png)
 
-The environment is built around a single Domain Controller (DC01, Windows Server 2022) hosting the `enterprise.lab` domain, with a department-based Organizational Unit structure — separate OUs for IT, Sales, and Finance, plus a dedicated Servers OU and a Service Accounts OU kept isolated from human user accounts.
+The environment is built around a single Domain Controller (DC01, Windows Server 2022) hosting the `enterprise.lab` domain, with a department-based Organizational Unit structure separate OUs for IT, Sales, and Finance, plus a dedicated Servers OU and a Service Accounts OU kept isolated from human user accounts.
 
 **Design decisions:**
 - **Department-based OUs** so Group Policy can be targeted per department later without restructuring the directory
-- **Isolated Service Accounts OU** — automated processes (backup, SQL, web app, file sync, monitoring) run under dedicated service accounts rather than personal or shared admin credentials, reducing blast radius if any one credential is compromised
-- **Group-based access control** for file share permissions instead of assigning permissions to individual users — this makes access audits and offboarding dramatically simpler at scale
+- **Isolated Service Accounts OU** automated processes (backup, SQL, web app, file sync, monitoring) run under dedicated service accounts rather than personal or shared admin credentials, reducing blast radius if any one credential is compromised
+- **Group-based access control** for file share permissions instead of assigning permissions to individual users this makes access audits and offboarding dramatically simpler at scale
 - **Domain-wide password and audit policy** enforced through Group Policy rather than local, per-machine configuration, so every domain-joined machine inherits the same security baseline automatically
 
 ## Implementation
@@ -53,32 +53,43 @@ Add-ADGroupMember -Identity "Domain Admins" -Members "adminuser"
 Configured a domain-wide password and audit policy through the Default Domain Policy in Group Policy Management Editor:
 - **Minimum password length:** 12 characters
 - **Password complexity requirements:** Enabled
-- **Audit Logon events:** Success and Failure — so both successful and failed sign-in attempts are logged domain-wide, giving visibility into potential brute-force or unauthorized access attempts
+- **Audit Logon events:** Success and Failure, so both successful and failed sign-in attempts are logged domain-wide, giving visibility into potential brute-force or unauthorized access attempts
 
 ## Screenshots
 
 ![Domain Controller promotion options](./Infrastructure/Active-Directory/screenshots/008-Domain-Controller-Options.png)
 *Forest and domain functional level configuration during DC promotion*
+<br />
 
 ![Service accounts](./Infrastructure/Active-Directory/screenshots/OU%20structure/010-Service-Accounts.png)
 *Dedicated service accounts, isolated from human user accounts*
+<br />
 
 ![Group-based file share access](./Infrastructure/Active-Directory/screenshots/Groups%20Access%20Control/002-Group-FileShare.png)
 *File share permissions assigned to a security group rather than individual users*
+<br />
 
 ![Minimum password length policy](./Security/001-Password-Policy.png)
 *Domain-wide minimum password length set to 12 characters via Group Policy*
+<br />
 
 ![Audit Logon policy](./Security/003-Audit-Logins.png)
 *Success and Failure logon auditing enabled domain-wide*
+<br />
 
 ## Problems Encountered
 
 **Problem:** During the initial AD DS promotion, the prerequisites check failed.
-**Solution:** [Fill in once you recall — likely a conflicting Certificate Services installation, based on the follow-up screenshot showing Certificate Services being removed. If that's right: "An existing Certificate Services installation conflicted with the Domain Controller promotion prerequisites. Removed/reconfigured Certificate Services and re-ran the promotion successfully."]
-**What I learned:** Domain Controller promotion has strict prerequisite checks that don't always surface obvious error messages — this taught me to read Windows Server error output carefully and verify what roles/services are already present on a server before assuming a clean install.
+**Solution:** An existing Certificate Services installation conflicted with the Domain Controller promotion prerequisites. Removed/reconfigured Certificate Services and re-ran the promotion successfully.
+**What I learned:** Domain Controller promotion has strict prerequisite checks that don't always surface obvious error messages this taught me to read Windows Server error output carefully and verify what roles/services are already present on a server before assuming a clean install.
+![Prerequisites Failed.png](./Infrastructure/Active-Directory/screenshots/013-Prerequisites-Failed.png)
+*Prerequisites check failed*
+<br />
 
-*(Take 5 minutes to look at `013-Prerequisites-Failed.png` and `014-Remove-Cert-Services.png` one more time and fill in the bracketed part above with what actually happened — even a rough memory is enough.)*
+![Prerequisites Failed.png](./Infrastructure/Active-Directory/screenshots/014-Remove-Cert-Services.png)
+*Removed/reconfigured Certificate Services*
+<br />
+
 
 ## Solution
 
