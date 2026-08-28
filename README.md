@@ -103,7 +103,7 @@ and adds the user to the security group that controls their file share access.
 - **One bad row doesn't stop the batch** — if a row fails, the rest still get created
 - **Reports results** — shows created, skipped, and failed counts at the end
 
-![Live execution](Automation/Screenshots/Powershell Bulk Users Screenshot .png)
+![Live execution](./Automation/Screenshots/Powershell-Bulk-Users-Screenshot.png)
 
 **Skills:** PowerShell · Active Directory · automating repetitive admin tasks ·
 handling passwords securely · writing scripts other people can safely re-run
