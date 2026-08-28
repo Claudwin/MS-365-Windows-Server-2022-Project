@@ -110,6 +110,45 @@ handling passwords securely · writing scripts other people can safely re-run
 
 💻 [`scripts/New-BulkADUser.ps1`](Automation/Scripts/New-BulkADUser.ps1)
 
+### File Services — Shared Folders and NTFS Permissions
+
+Built a departmental file share on DC01 with access controlled entirely through
+Active Directory groups, so permissions are managed by group membership rather than
+by editing folders.
+
+Seven department folders sit under `C:\Shares\DepartmentFiles`, matching the
+department OU structure. Each one is restricted to its own department using
+Microsoft's AGDLP model: users go into a global group (`GG_Finance_Users`), that
+group goes into a domain local group (`DL_FileShare_Finance_Modify`), and only the
+domain local group is granted permission on the folder. Adding a user to one group
+grants their file access — nothing on the folder itself ever needs to change.
+
+Inheritance was disabled on each department folder and the default domain-wide read
+access removed, so Sales cannot browse Finance and Marketing cannot browse Executive.
+
+**Final permissions on a department folder:**
+ENTERPRISE\DL_FileShare_Finance_Modify:(OI)(CI)(M)
+NT AUTHORITY\SYSTEM:(OI)(CI)(F)
+BUILTIN\Administrators:(OI)(CI)(F)
+CREATOR OWNER:(OI)(CI)(IO)(F)
+![NTFS permissions applied](./Infrastructure/File-Services/screenshots/005-NTFS-Permissions-Applied.png)
+
+**Skills:** NTFS permissions · SMB shares · AGDLP group nesting · permission
+inheritance · `icacls` · verifying access control from the command line
+
+### DNS — Zone Configuration and Resolution Testing
+
+Configured a forward lookup zone for an external domain (`company.com`) alongside the
+Active Directory-integrated `enterprise.lab` zone, and created host records for common
+services — `www`, `mail`, and `remote` — pointing to their respective addresses.
+
+Verified resolution end to end with `nslookup`, confirming the server returns the
+correct address for each record.
+
+![DNS zone structure](./Infrastructure/DNS/screenshots/001-DNS-Structure.png)
+
+**Skills:** DNS zones and A records · forward lookup configuration · `nslookup`
+resolution testing · DNS Manager
 
 ## Problems Encountered
 
