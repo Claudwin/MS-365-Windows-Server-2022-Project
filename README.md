@@ -77,6 +77,41 @@ Configured a domain-wide password and audit policy through the Default Domain Po
 *Success and Failure logon auditing enabled domain-wide*
 <br />
 
+### PowerShell Bulk User Provisioning
+
+Built a PowerShell script that creates Active Directory user accounts from a
+spreadsheet instead of clicking through Active Directory Users and Computers one
+account at a time.
+
+Before building it, I audited the twelve accounts already in the domain. None of them
+had a Department set. One account was sitting outside the department folder structure,
+and one used a different username format from every other account. Those are the exact
+mistakes that happen when accounts are created by hand — and the reason to script it.
+
+The script reads a CSV file, builds each username to the same standard, creates the
+account in the right department folder with its job title and department filled in,
+and adds the user to the security group that controls their file share access.
+
+**What it does**
+
+- **Safe to run twice** — checks whether an account already exists before creating it,
+  so re-running the same file doesn't create duplicates
+- **Preview mode** — `-WhatIf` shows exactly what would be created before anything
+  actually is
+- **No password stored in the file** — prompts for a temporary password when it runs,
+  and forces the user to change it at first login
+- **One bad row doesn't stop the batch** — if a row fails, the rest still get created
+- **Reports results** — shows created, skipped, and failed counts at the end
+
+![Live execution](./documentation/screenshots/bulk-provisioning/03-live-run.png)
+
+**Skills:** PowerShell · Active Directory · automating repetitive admin tasks ·
+handling passwords securely · writing scripts other people can safely re-run
+
+📄 [Full write-up — how it works, what broke, and what I'd improve](./documentation/bulk-user-provisioning.md)
+💻 [`scripts/New-BulkADUser.ps1`](./scripts/New-BulkADUser.ps1)
+
+
 ## Problems Encountered
 
 **Problem:** During the initial AD DS promotion, the prerequisites check failed.
