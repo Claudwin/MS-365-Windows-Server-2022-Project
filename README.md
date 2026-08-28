@@ -103,13 +103,12 @@ and adds the user to the security group that controls their file share access.
 - **One bad row doesn't stop the batch** — if a row fails, the rest still get created
 - **Reports results** — shows created, skipped, and failed counts at the end
 
-![Live execution](./documentation/screenshots/bulk-provisioning/03-live-run.png)
+![Live execution](Automation/Screenshots/Powershell Bulk Users Screenshot .png)
 
 **Skills:** PowerShell · Active Directory · automating repetitive admin tasks ·
 handling passwords securely · writing scripts other people can safely re-run
 
-📄 [Full write-up — how it works, what broke, and what I'd improve](./documentation/bulk-user-provisioning.md)
-💻 [`scripts/New-BulkADUser.ps1`](./scripts/New-BulkADUser.ps1)
+💻 [`scripts/New-BulkADUser.ps1`](Automation/Scripts/New-BulkADUser.ps1)
 
 
 ## Problems Encountered
@@ -141,7 +140,6 @@ The result is a working Active Directory domain (`enterprise.lab`) with a depart
 
 ## What's Next
 
-- PowerShell automation for bulk user/account provisioning
 - File Services: NTFS permissions and share setup (scaffolded, not yet built)
 - Microsoft 365 / Hybrid Identity integration (scaffolded, not yet built)
 - Secondary Domain Controller, DNS redundancy, FSMO roles
@@ -154,6 +152,7 @@ The result is a working Active Directory domain (`enterprise.lab`) with a depart
 - [x] Organizational Unit structure & user/service account provisioning
 - [x] Group-based file share access control
 - [x] Domain security baseline (password policy & audit logging)
+- [X] PowerShell automation for bulk user/account provisioning
 - [ ] File Server & NTFS permissions
 - [ ] Secondary Domain Controller / DNS redundancy
 - [ ] Client machine integration
