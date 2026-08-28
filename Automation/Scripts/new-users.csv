@@ -1,0 +1,5 @@
+FirstName,LastName,Department,Title,OUPath,Group
+Nadia,S0rensen,IT,Cloud Engineer,"OU=Users,OU=IT,OU=Departments,DC=enterprise,DC=lab",GG_IT_Users
+Tomas,Herrera,Sales,Sales Engineer,"OU=Users,OU=Sales,OU=Departments,DC=enterprise,DC=lab",GG_Sales_Users
+Michael,Chen,IT,System Administrator,"OU=Users,OU=IT,OU=Departments,DC=enterprise,DC=lab",GG_IT_Users
+Emily,Davis,Sales,Account Executive,"OU=Users,OU=Sales,OU=Departments,DC=enterprise,DC=lab",GG_Sales_Users
